@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+string buildCipherAlphabet(const string& key) {
+    string cipherAlphabet = key;
+    for (char c = 'a'; c <= 'z'; ++c) {
+        if (key.find(c) == string::npos) {
+            cipherAlphabet.push_back(c);
+        }
+    }
+    return cipherAlphabet;
+}
+
+string encrypt(const string& plainText, const string& cipherAlphabet) {
+    string encryptedText = plainText;
+    for (char& c : encryptedText) {
+        if (isalpha(c)) {
+            char replacement = cipherAlphabet[tolower(c) - 'a'];
+            c =isupper(c) ? toupper(replacement) : replacement;
+        }
+    }
+    return encryptedText;
+}
+
+string decrypt(const string& cipherText, const string& cipherAlphabet) {
+    string decryptedText = cipherText;
+    for (char& c : decryptedText) {
+        if (isalpha(c)) {
+            char replacement = 'a' + distance(cipherAlphabet.begin(), find(cipherAlphabet.begin(), cipherAlphabet.end(), tolower(c)));
+            c = isupper(c) ? toupper(replacement) : replacement;
+        }
+    }
+    return decryptedText;
+}
+
+int main() {
+    string key;
+    cout << "Enter the key (5 unique letters): ";
+    cin >> key;
+
+    if (key.size() != 5 || count_if(key.begin(), key.end(), [](char c) { return !isalpha(c); }) != 0) {
+        cout << "Please enter 5 unique alphabetical letters." << endl;
+        return 1;
+    }
+
+    string cipherAlphabet = buildCipherAlphabet(key);
+
+    string plainText;
+    cout << "Enter the plain text: ";
+    cin.ignore();
+    getline(cin, plainText);
+
+    string encryptedText = encrypt(plainText, cipherAlphabet);
+    cout << "Encrypted text: " << encryptedText << endl;
+
+    string decryptedText = decrypt(encryptedText, cipherAlphabet);
+    cout << "Decrypted text: " << decryptedText << endl;
+
+    return 0;
+}
